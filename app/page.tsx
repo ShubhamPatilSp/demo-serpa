@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
 
 const popularLocations = [
   'New York, United States',
@@ -24,6 +24,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [showLocations, setShowLocations] = useState(false)
   const [filteredLocations, setFilteredLocations] = useState(popularLocations)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const locationRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -84,6 +85,18 @@ export default function Home() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Handle preview modal
+  const handlePreview = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
+    e.preventDefault()
+    setPreviewUrl(url)
+    const link = e.currentTarget
+    link.classList.add('visited')
+  }
+
+  const closePreview = () => {
+    setPreviewUrl(null)
   }
 
   return (
@@ -193,22 +206,31 @@ export default function Home() {
 
               <div className="space-y-8">
                 {results?.organic_results?.map((result: any, index: number) => (
-                  <div key={index} className="max-w-2xl">
-                    <div className="group">
+                  <div key={index} className={`max-w-2xl ${index === 0 ? 'first-result' : ''}`}>
+                    <div className={`group p-4 rounded-lg transition-all duration-200 hover:bg-blue-50 
+                      ${index === 0 ? 'border border-blue-100 bg-blue-50/50 shadow-sm' : ''}`}>
                       <a 
                         href={result.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#1a0dab] text-xl hover:underline block"
+                        onClick={(e) => handlePreview(e, result.link)}
+                        className={`text-[#1a0dab] hover:underline block visited:text-purple-700
+                          ${index === 0 ? 'text-2xl font-medium mb-2' : 'text-xl mb-1'}`}
+                        data-result={index}
                       >
                         {result.title}
                       </a>
-                      <div className="text-sm text-[#006621] mb-1">
+                      <div className={`text-[#006621] mb-1 ${index === 0 ? 'text-base' : 'text-sm'}`}>
                         {result.displayed_link || result.link}
                       </div>
-                      <div className="text-sm text-[#4d5156] line-clamp-2">
+                      <div className={`text-[#4d5156] ${index === 0 ? 'text-base leading-relaxed' : 'text-sm line-clamp-2'}`}>
                         {result.snippet}
                       </div>
+                      {index === 0 && result.thumbnail && (
+                        <img 
+                          src={result.thumbnail}
+                          alt={result.title}
+                          className="mt-3 rounded-lg max-w-[200px] h-auto"
+                        />
+                      )}
                     </div>
                   </div>
                 ))}
@@ -233,6 +255,43 @@ export default function Home() {
                   {JSON.stringify(results, null, 2)}
                 </code>
               </pre>
+            </div>
+          </div>
+        )}
+
+        {/* Preview Modal */}
+        {previewUrl && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl shadow-2xl w-[90vw] h-[90vh] flex flex-col">
+              <div className="p-4 border-b flex justify-between items-center">
+                <h3 className="text-lg font-medium">Preview</h3>
+                <button 
+                  onClick={closePreview}
+                  className="p-1 rounded-lg hover:bg-gray-100"
+                >
+                  <XMarkIcon className="w-6 h-6 text-gray-500" />
+                </button>
+              </div>
+              <div className="flex-1 relative">
+                <iframe 
+                  src={previewUrl} 
+                  className="absolute inset-0 w-full h-full"
+                  sandbox="allow-scripts allow-same-origin"
+                />
+              </div>
+              <div className="p-4 border-t flex justify-between items-center bg-gray-50">
+                <span className="text-sm text-gray-600">
+                  Previewing: {previewUrl}
+                </span>
+                <a 
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Open in New Tab
+                </a>
+              </div>
             </div>
           </div>
         )}

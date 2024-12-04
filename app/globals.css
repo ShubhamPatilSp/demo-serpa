@@ -47,6 +47,39 @@ pre, code {
   line-height: 1.58;
 }
 
+/* Search result styles */
+.first-result {
+  position: relative;
+}
+
+.first-result::before {
+  content: 'Top Result';
+  position: absolute;
+  top: -0.75rem;
+  left: 1rem;
+  background: #1a73e8;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  z-index: 1;
+}
+
+/* Visited link styles */
+a.visited {
+  color: #681da8 !important;
+}
+
+/* Hover animation for search results */
+.group {
+  transition: all 0.2s ease-in-out;
+}
+
+.group:hover {
+  transform: translateY(-1px);
+}
+
 /* Custom scrollbar for code viewer */
 pre::-webkit-scrollbar {
   width: 12px;
@@ -73,3 +106,75 @@ pre::-webkit-scrollbar-thumb:hover {
 .json-boolean { color: #ff628c; }
 .json-null { color: #ff628c; }
 .json-key { color: #5ccfe6; }
+
+/* Modal animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modalBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fixed {
+  animation: modalBackdropIn 0.2s ease-out;
+}
+
+.fixed > div {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+/* Loading indicator for iframe */
+.flex-1.relative::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83'/%3E%3C/svg%3E") center/48px no-repeat;
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.flex-1.relative iframe {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.flex-1.relative iframe[data-loaded="true"] {
+  opacity: 1;
+}
+
+.flex-1.relative iframe[data-loaded="true"] + .flex-1.relative::before {
+  opacity: 0;
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Fade effects */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
