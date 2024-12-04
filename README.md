@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SERP - Search Engine Results Page Application
+
+A modern web application built with Next.js that allows users to perform location-based searches and view search engine results. The application features a clean, responsive interface with location suggestions and real-time search capabilities.
+
+## Features
+
+- 🔍 Real-time search functionality
+- 📍 Location-based searching with popular location suggestions
+- 🎯 Dynamic result filtering
+- 💫 Modern, responsive UI built with Tailwind CSS
+- 🚀 Built with Next.js 15 and TypeScript for optimal performance
+- 🔄 Auto-updating search results
+- 📱 Mobile-friendly design
+
+## Tech Stack
+
+- **Framework:** Next.js 15.0.3
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Icons:** Heroicons
+- **API Integration:** Axios, SerpAPI
+- **UI Components:** React Select
+
+## Prerequisites
+
+- Node.js (Latest LTS version recommended)
+- npm or yarn package manager
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+```bash
+git clone [your-repo-url]
+cd serp
+```
 
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables:
+Create a `.env` file in the root directory with the following variables:
+```env
+SERPAPI_API_KEY=your_api_key_here
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/app` - Main application code
+  - `/api` - API route handlers
+  - `/fonts` - Custom font configurations
+  - `page.tsx` - Main search interface
+  - `layout.tsx` - Root layout component
+- `/public` - Static assets
+- `tailwind.config.ts` - Tailwind CSS configuration
 
-## Learn More
+## Development
 
-To learn more about Next.js, take a look at the following resources:
+The application uses Next.js App Router and React Server Components. The main search interface is located in `app/page.tsx` and includes:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Location-based search functionality
+- Popular location suggestions
+- Dynamic search results display
+- Error handling and loading states
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+The application can be easily deployed on Vercel:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/serp)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For other deployment options, refer to the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying).
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
