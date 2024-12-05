@@ -2,6 +2,57 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDownIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import Image from 'next/image'
+
+interface SearchResult {
+  search_metadata: {
+    id: string;
+    status: string;
+    json_endpoint: string;
+    created_at: string;
+    processed_at: string;
+    google_url: string;
+    raw_html_file: string;
+    total_time_taken: number;
+  };
+  search_parameters: {
+    engine: string;
+    q: string;
+    location_requested: string;
+    location_used: string;
+    google_domain: string;
+    hl: string;
+    gl: string;
+    device: string;
+  };
+  search_information: {
+    organic_results_state: string;
+    query_displayed: string;
+    total_results: number;
+    time_taken_displayed: number;
+  };
+  organic_results: Array<{
+    position: number;
+    title: string;
+    link: string;
+    displayed_link: string;
+    snippet: string;
+    snippet_highlighted_words: string[];
+    about_this_result: {
+      source: {
+        description: string;
+        icon: string;
+      };
+    };
+    cached_page_link: string;
+    related_pages_link: string;
+    thumbnail?: string;
+  }>;
+  related_questions?: Array<{
+    question: string;
+    snippet: string;
+  }>;
+}
 
 const popularLocations = [
   'New York, United States',
@@ -20,7 +71,7 @@ export default function Home() {
   const [query, setQuery] = useState('')
   const [location, setLocation] = useState('Austin, Texas, United States')
   const [loading, setLoading] = useState(false)
-  const [results, setResults] = useState<any>(null)
+  const [results, setResults] = useState<SearchResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [showLocations, setShowLocations] = useState(false)
   const [filteredLocations, setFilteredLocations] = useState(popularLocations)
@@ -79,8 +130,9 @@ export default function Home() {
       }
       
       setResults(data)
-    } catch (error: any) {
-      setError(error.message || 'An unexpected error occurred')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+      setError(errorMessage)
       console.error('Search error:', error)
     } finally {
       setLoading(false)
@@ -190,10 +242,11 @@ export default function Home() {
             {/* Left Panel - Google Results Preview */}
             <div className="bg-white rounded-lg shadow-lg p-4 h-[790px] overflow-y-auto">
               <div className="border-b pb-2 mb-4">
-                <img 
+                <Image 
                   src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" 
                   alt="Google" 
-                  className="h-7"
+                  width={92}
+                  height={30}
                 />
                 <div className="flex gap-6 mt-4 text-sm">
                   <button className="text-blue-600 border-b-2 border-blue-600 pb-2">All</button>
@@ -205,7 +258,7 @@ export default function Home() {
               </div>
 
               <div className="space-y-8">
-                {results?.organic_results?.map((result: any, index: number) => (
+                {results?.organic_results?.map((result, index) => (
                   <div key={index} className={`max-w-2xl ${index === 0 ? 'first-result' : ''}`}>
                     <div className={`group p-4 rounded-lg transition-all duration-200 hover:bg-blue-50 
                       ${index === 0 ? 'border border-blue-100 bg-blue-50/50 shadow-sm' : ''}`}>
@@ -225,17 +278,19 @@ export default function Home() {
                         {result.snippet}
                       </div>
                       {index === 0 && result.thumbnail && (
-                        <img 
+                        <Image 
                           src={result.thumbnail}
                           alt={result.title}
-                          className="mt-3 rounded-lg max-w-[200px] h-auto"
+                          width={200}
+                          height={150}
+                          className="mt-3 rounded-lg"
                         />
                       )}
                     </div>
                   </div>
                 ))}
 
-                {results?.related_questions?.map((question: any, index: number) => (
+                {results?.related_questions?.map((question, index) => (
                   <div key={`question-${index}`} className="border rounded-lg p-3 bg-gray-50">
                     <h3 className="font-medium mb-2">{question.question}</h3>
                     <p className="text-sm text-gray-600">{question.snippet}</p>
@@ -261,36 +316,21 @@ export default function Home() {
 
         {/* Preview Modal */}
         {previewUrl && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-2xl w-[90vw] h-[90vh] flex flex-col">
-              <div className="p-4 border-b flex justify-between items-center">
-                <h3 className="text-lg font-medium">Preview</h3>
-                <button 
-                  onClick={closePreview}
-                  className="p-1 rounded-lg hover:bg-gray-100"
-                >
-                  <XMarkIcon className="w-6 h-6 text-gray-500" />
-                </button>
-              </div>
-              <div className="flex-1 relative">
-                <iframe 
-                  src={previewUrl} 
-                  className="absolute inset-0 w-full h-full"
-                  sandbox="allow-scripts allow-same-origin"
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden relative">
+              <button
+                onClick={closePreview}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+              <div className="h-[90vh]">
+                <Image
+                  src={previewUrl}
+                  alt="Website preview"
+                  fill
+                  className="object-contain"
                 />
-              </div>
-              <div className="p-4 border-t flex justify-between items-center bg-gray-50">
-                <span className="text-sm text-gray-600">
-                  Previewing: {previewUrl}
-                </span>
-                <a 
-                  href={previewUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Open in New Tab
-                </a>
               </div>
             </div>
           </div>
